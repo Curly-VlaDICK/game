@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра на соответствие: Еда</title>
+    <style>
+         body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Чтобы контент начинался сверху */
+            min-height: 100vh; /* Минимальная высота экрана */
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px; /* Увеличил отступ снизу */
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px; /* Ограничил ширину контейнера */
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            width: 120px;
+            height: 120px;
+            margin: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Added a subtle shadow */
+        }
+
+        .card img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        .matched {
+            visibility: hidden;
+        }
+
+        .selected {
+            background-color: #ccebff;
+        }
+
+        /* Стили для кнопки */
+        .button {
+          background-color: #4CAF50; /* Green */
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          cursor: pointer;
+          border-radius: 5px;
+          margin-top: 20px;
+        }
+
+        .button:hover {
+          background-color: #3e8e41;
+        }
+
+        /* Стили для адаптивности */
+        @media (max-width: 600px) {
+            .card {
+                width: 90px;
+                height: 90px;
+                margin: 5px;
+                font-size: 14px;
+            }
+
+            .card-container {
+                padding: 5px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Игра на соответствие: Еда</h1>
+
+    <div class="card-container" id="cardContainer">
+    </div>
+
+    <button class="button" onclick="startGame()">Начать новую игру</button>
+
+    <script>
+        // JavaScript-код
+        const foodData = [
+            { name: "Мясо", image: "мясо.jpg" },
+            { name: "Курица", image: "курица.jpg" },
+            { name: "Рыба", image: "рыба.jpg" },
+            { name: "Рис", image: "рис.jpg" },
+            { name: "Паста", image: "паста.jpg" },
+            { name: "Яйцо", image: "яйцо.jpg" },
+            { name: "Хлеб", image: "хлеб.jpg" },
+            { name: "Масло", image: "масло.jpg" },
+            { name: "Круассан", image: "круассан.jpg" },
+            { name: "Сыр", image: "сыр.jpg" },
+            { name: "Мед", image: "мед.jpg" },
+            { name: "Хлопья", image: "хлопья.jpg" },
+            { name: "Сахар", image: "сахар.jpg" },
+            { name: "Соль", image: "соль.jpg" },
+            { name: "Бутерброд", image: "бутерброд.jpg" },
+            { name: "Ветчина", image: "ветчина.jpg" },
+            { name: "Йогурт", image: "йогурт.jpg" },
+            { name: "Колбаса", image: "колбаса.jpg" },
+            { name: "Сосиска", image: "сосиска.jpg" },
+            { name: "Каша", image: "каша.jpg" },
+            { name: "Блины", image: "блины.jpg" },
+            { name: "Варенье", image: "варенье.jpg" },
+            { name: "Морепродукты", image: "морепродукты.jpg" },
+            { name: "Яблоко", image: "яблоко.jpg" },
+            { name: "Картофель", image: "картофель.jpg" },
+            { name: "Виноград", image: "виноград.jpg" },
+            { name: "Киви", image: "киви.jpg" },
+            { name: "Помидор", image: "помидор.jpg" },
+            { name: "Гриб", image: "гриб.jpg" },
+            { name: "Апельсин", image: "апельсин.jpg" },
+            { name: "Огурец", image: "огурец.jpg" },
+            { name: "Лук", image: "лук.jpg" },
+            { name: "Морковь", image: "морковь.jpg" },
+            { name: "Капуста", image: "капуста.jpg" },
+            { name: "Свекла", image: "свекла.jpg" },
+            { name: "Редис", image: "редис.jpg" },
+            { name: "Салат", image: "салат.jpg" },
+            { name: "Орехи", image: "орехи.jpg" },
+            { name: "Шоколад", image: "шоколад.jpg" },
+            { name: "Мороженое", image: "мороженое.jpg" },
+            { name: "Пирожок", image: "пирожок.jpg" },
+            { name: "Торт", image: "торт.jpg" },
+            { name: "Апельсиновый сок", image: "апельсиновый_сок.jpg" },
+            { name: "Молоко", image: "молоко.jpg" },
+            { name: "Кефир", image: "кефир.jpg" },
+            { name: "Горячий шоколад", image: "горячий_шоколад.jpg" },
+            { name: "Квас", image: "квас.jpg" },
+            { name: "Морс", image: "морс.jpg" },
+            { name: "Чай", image: "чай.jpg" },
+            { name: "Кофе", image: "кофе.jpg" },
+            { name: "Имбирь", image: "имбирь.jpg" },
+            { name: "Соль", image: "соль.jpg" },
+            { name: "Суп", image: "суп.jpg" },
+            { name: "Соус", image: "соус.jpg" },
+            { name: "Лимон", image: "лимон.jpg" },
+            { name: "Фрукты", image: "фрукты.jpg" },
+            { name: "Гарнир", image: "гарнир.jpg" },
+            { name: "Майонез", image: "майонез.jpg" },
+            { name: "Овощи", image: "овощи.jpg" },
+            { name: "Лапша", image: "лапша.jpg" },
+            { name: "Пицца", image: "пицца.jpg" }
+        ];
+
+        let selectedFood = [];
+        let firstCard = null;
+        let secondCard = null;
+        let matchedPairs = 0;
+        let gameActive = true;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startGame() {
+            gameActive = true;
+            // Выбираем 6 случайных элементов еды
+            selectedFood = [];
+            const shuffledFood = shuffleArray([...foodData]);
+            for (let i = 0; i < 6; i++) {
+              selectedFood.push(shuffledFood[i]);
+             }
+
+            // Создаем пары: картинка и название
+            const pairs = [];
+            selectedFood.forEach(item => {
+                pairs.push({ type: 'image', value: item.image, name: item.name });
+                pairs.push({ type: 'name', value: item.name, name: item.name });
+            });
+
+            // Перемешиваем карточки
+            const shuffledPairs = shuffleArray(pairs);
+
+            // Отрисовываем карточки
+            const cardContainer = document.getElementById('cardContainer');
+            cardContainer.innerHTML = ''; // Очищаем контейнер
+            shuffledPairs.forEach((pair, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.index = index;
+                card.dataset.name = pair.name;
+                card.addEventListener('click', cardClicked);
+
+                if (pair.type === 'image') {
+                    const img = document.createElement('img');
+                    img.src = "images/" + pair.value;   // Добавил префикс "images/"
+                    img.alt = pair.name;
+                    card.appendChild(img);
+                } else {
+                    card.textContent = pair.value;
+                }
+
+                cardContainer.appendChild(card);
+            });
+
+            firstCard = null;
+            secondCard = null;
+            matchedPairs = 0;
+
+            //Сброс стилей matched
+            const allCards = document.querySelectorAll('.card');
+            allCards.forEach(card=> {
+                card.classList.remove('matched');
+                card.classList.remove('selected');
+                card.style.visibility = 'visible';
+            });
+        }
+
+       function cardClicked(event) {
+        if (!gameActive) return; // If the game is not active, do nothing.
+        const card = event.target.closest('.card');
+        if (!card || card.classList.contains('matched')) return;
+
+        if (!firstCard) {
+            firstCard = card;
+            firstCard.classList.add('selected');
+        } else if (!secondCard && card !== firstCard) {
+            secondCard = card;
+            secondCard.classList.add('selected');
+            gameActive = false; //  Блокируем дальнейшие клики
+
+            const firstName = firstCard.dataset.name;
+            const secondName = secondCard.dataset.name;
+
+            if (firstName === secondName) {
+                // Совпадение
+                setTimeout(() => {
+                    firstCard.classList.add('matched');
+                    secondCard.classList.add('matched');
+                    matchedPairs++;
+
+                    // Сбрасываем выбранные карты
+                    firstCard = null;
+                    secondCard = null;
+                    gameActive = true; //  Разрешаем клики снова
+
+                    // Проверяем, закончена ли игра
+                    if (matchedPairs === selectedFood.length) {
+                       setTimeout(() => {
+                            alert('Поздравляем! Вы нашли все пары!');
+                            startGame(); // Начинаем новую игру
+                        }, 500);  // Небольшая задержка перед началом новой игры
+                    }
+                }, 700); // Delay before hiding found cards (700 milliseconds)
+            } else {
+                // Не совпадение
+                setTimeout(() => {
+                    firstCard.classList.remove('selected');
+                    secondCard.classList.remove('selected');
+                    firstCard = null;
+                    secondCard = null;
+                    gameActive = true; //  Разрешаем клики снова
+                }, 1000);
+            }
+        }
+       }
+
+        // Запускаем игру при загрузке страницы
+        window.onload = startGame;
+    </script>
+</body>
+</html>
